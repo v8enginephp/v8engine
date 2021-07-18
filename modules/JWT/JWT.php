@@ -45,6 +45,7 @@ final class JWT
 
         V8Exception::handle("route.invalid", function () {
             echo view("abort");
+            die();
         });
     }
 
@@ -60,6 +61,7 @@ final class JWT
     private function bindUser()
     {
         container("user", JWT::getUser());
+
         blade()->composer('*', function (BladeOne $blade) {
             $blade->with("user", app("user"));
         });
@@ -87,11 +89,11 @@ final class JWT
         migrate("roles", dirname(__FILE__));
         migrate("users", dirname(__FILE__));
         migrate("user_permission", dirname(__FILE__));
+        migrate("user_comments", dirname(__FILE__));
     }
 
     public static function onUpdate()
     {
-        migrate("user_comments", dirname(__FILE__));
     }
 
     public static function getSessionUser()
