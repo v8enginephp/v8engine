@@ -1,0 +1,1 @@
+<a href='{{route("role.edit", $role->id)}}' class='btn btn-warning rounded'>ویرایش</a>

@@ -1,0 +1,15 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Module\\JWT\\Model\\": "Database/Model",
+      "Module\\JWT\\Controller\\": "Http/Controller",
+      "Module\\JWT\\Middleware\\": "Http/Middleware"
+    },
+    "files": [
+      "helper.php"
+    ]
+  },
+  "require": {
+    "ext-json": "*"
+  }
+}

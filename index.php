@@ -17,6 +17,6 @@ define("BASEDIR", __DIR__);
  * Load Composer Packages
  */
 require_once BASEDIR . "/vendor/autoload.php";
-require_once BASEDIR . "/../composer/v8/vendor/autoload.php";
+require_once BASEDIR . "/../v8/vendor/autoload.php";
 
 App::boot(Www::class);
