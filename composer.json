@@ -3,6 +3,7 @@
   "type": "project",
   "decription" : "The PHP Modular Engine By Laravel",
   "keywords": ["engine","v8engine"],
+  "version": "1.5.7",
   "license": "MIT",
   "require": {
     "ext-curl": "*",
