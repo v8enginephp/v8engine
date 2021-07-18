@@ -1,0 +1,36 @@
+{
+  "name": "v8enginephp/v8engine",
+  "type": "project",
+  "decription" : "The PHP Modular Engine By Laravel",
+  "keywords": ["engine","v8engine"],
+  "license": "MIT",
+  "require": {
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-zlib": "*",
+    "ext-gd": "*"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true,
+    "platform": {
+      "php": "7.4.9"
+    },
+    "preferred-install": {
+      "*": "dist"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\Controller\\": "app/Http/Controller",
+      "Template\\" : "templates"
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ]
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
