@@ -7,16 +7,12 @@ namespace Module\JWT\Model;
 use App\Helper\HasTable;
 use App\Helper\Metable;
 use App\Helper\Otp;
-use Carbon\Carbon;
 use Core\Model;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Module\JWT\JWT;
-use Module\Kavenegar\Kavenegar;
-use Module\Shop\Model\Order;
-use Module\Shop\Model\Payment;
-use Module\JWT\Model\UserComment;
 use function sprintf;
 
 /**
@@ -26,7 +22,6 @@ use function sprintf;
  * @property mixed verify_code
  * @property mixed parent_id
  * @property User parent
- * @property Order[] orders
  * @property Collection children
  * @property mixed credit
  * @property mixed slug
@@ -111,23 +106,12 @@ class User extends Model
         return self::where(self::EMAIL, $email)->where(self::PASSWORD, $password)->first();
     }
 
-    public static function getLastHalfOrder($userId = null): ?Order
-    {
-        $userId = $userId ?: JWT::getUser()->id;
-        return Order::where(Order::USER_ID, $userId)
-            ->whereNotNull(Order::USER_ID)
-            ->where(Order::STATUS, "!=", "کارت به کارت")
-            ->where(Order::IS_PAID, 0)
-            ->whereDate(Order::CREATED_AT, ">=", Carbon::now()->addHours(-24))->first();
-    }
-
     public static function getDefaultColumns(): array
     {
         return [
-            column(self::ID, "شناسه", 1, fn(self $user) => view("user.components.id", ["model" => $user])),
+            column(self::ID, "شناسه", 1),
             column(self::FULL_NAME, "نام", 2),
             column(self::ROLE_NAME, "سمت", 3),
-            column("children", "زیر مجموعه ها", 4, fn(self $user) => "<a href='" . url("users") . "/affiliate/.{$user->id}' class='btn btn-info rounded open-edit-model'>مشاهده</a>"),
             column(self::PHONE, "موبایل", 5),
             column(self::CREATED_AT_P, "تاریخ ثبت نام", 6),
             column(self::VERIFY_CODE, "کد تایید", 7),
@@ -136,15 +120,6 @@ class User extends Model
             column(self::CREDIT, "مانده حساب", 10),
             column("manage", "عملیات", 11, fn(self $model) => view("components.manage", compact("model")))
         ];
-    }
-
-    public static function findMarketer($slug)
-    {
-        if (!$slug)
-            return null;
-        return User::where(User::SLUG, $slug)->whereHas("role", function ($query) {
-            return $query->where(Role::SCOPES, "LIKE", "%\"marketer\"%");
-        })->first();
     }
 
     public function getRoleNameAttribute()
@@ -161,7 +136,7 @@ class User extends Model
         return $this->update([User::VERIFY_CODE => $verifyCode, User::STATUS => User::VERIFY, self::VERIFY_TIMESTAMP => time()]);
     }
 
-    public function verify($code)
+    public function verify($code): bool
     {
         if ($code != $this->verify_code) {
             $this->increment(self::VERIFY_TRY);
@@ -173,6 +148,7 @@ class User extends Model
 
     public function setPassword($password)
     {
+        $this->fillable[] = "password";
         $this->update([self::PASSWORD => sha1($password)]);
     }
 
@@ -181,18 +157,18 @@ class User extends Model
         return $this->two_factor_login;
     }
 
-    public function role()
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id');
     }
 
-    public function withRole()
+    public function withRole(): User
     {
         $this->with("role");
         return $this;
     }
 
-    public function setParent($parent)
+    public function setParent($parent): User
     {
         if (is_int($parent))
             $parent = self::find($parent);
@@ -242,52 +218,9 @@ class User extends Model
         return sprintf("%s %s", $this->name, $this->family);
     }
 
-    public function orders()
-    {
-        return $this->hasMany(Order::class, 'user_id');
-    }
-
     public function isChildren($userId)
     {
         return in_array($userId, $this->children->pluck(self::ID)->toArray());
-    }
-
-    public function checkAndCostWallet($amount)
-    {
-        if ($this->credit >= $amount) {
-            return $this->costWallet($amount);
-        }
-        return false;
-    }
-
-    public function costWallet($amount, $maxLoan = 10000)
-    {
-        if ((!$maxLoan) or $this->credit + $maxLoan >= $amount)
-            return $this->decrement(self::CREDIT, $amount);
-
-        return false;
-    }
-
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
-
-    public function getDirectProfitPercent()
-    {
-        return 20 / 100;
-    }
-
-    public function getLvl2ProfitPercent()
-    {
-        return 5 / 100;
-    }
-
-    public function setActiveCustomer($customerId)
-    {
-        if (!$customerId)
-            setcookie('customer', $customerId, time() - 100, "/");
-        setcookie('customer', $customerId, time() + 10000, "/");
     }
 
     public function userPermission(): HasMany
@@ -295,34 +228,4 @@ class User extends Model
         return $this->hasMany(UserPermission::class);
     }
 
-    public function comments(): HasMany
-    {
-        return $this->hasMany(UserComment::class);
-    }
-
-    public function getCommentTagsAttribute()
-    {
-        return $this->commentTags();
-    }
-
-    /**
-     * @return array
-     */
-    public function commentTags(): array
-    {
-        $tags=[];
-
-        collect($this->comments)->map(function ($item) use(&$tags){
-            $re = '/#[a-zA-Z0-9]+/m';
-            preg_match_all($re, $item->comment, $matches, PREG_SET_ORDER, 0);
-            $tags=array_merge_recursive($tags,...$matches);
-        });
-
-        return $tags;
-    }
-
-    public function otpLog()
-    {
-        return $this->hasMany(\Module\Kavenegar\Model\OtpLog::class,"parent_id");
-    }
 }

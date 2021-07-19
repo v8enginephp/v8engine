@@ -51,10 +51,9 @@ class AdminProfileController
     public function index(Request $request)
     {
         $users = User::where([
-                [User::PHONE,"like","%{$request->input("phone")}%"],
-                [User::PARENT_ID,$request->input("parent_id")!="" ? "=" : "!=","%{$request->input("parent_id")}%"],
+                [User::PHONE, "like", "%{$request->input("phone")}%"],
             ]
-        )->with("role", "metas","comments")->orderBy('id', 'DESC')->limit(200)->get();
+        )->with("role", "metas")->orderBy('id', 'DESC')->limit(200)->get();
 
         return view('user.index', compact("users"));
 //        return template("dashboard")->blank(view('user.index', ["users" => User::with("role", "metas")->orderBy('id', 'DESC')->get()]),['subtitle'=>"لیست کاربران"]);

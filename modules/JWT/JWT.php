@@ -38,8 +38,8 @@ final class JWT
         menu("users", "کل کاربران", "", "", "admin.users", "icon-people", 8);
         menu("users.list", "مدیریت کاربران", 'users', "users", "admin.users");
         menu("profile.profile", "پروفایل", 'user/profile', "", null, "icon-people", 8);
-        menu("role", "وظیفه", '', "", "admin.roles", "fa fa-hand-paper-o");
-        menu("role.list", "وظایف", route("role.index"), "role", "admin.roles", "fa fa-hand-paper-o");
+        menu("role", "نقش ها", route("role.index"), "", "admin.roles", "fa fa-hand-paper-o");
+//        menu("role.list", "وظایف", "role", "admin.roles", "fa fa-hand-paper-o");
         $this->bindUser();
         $this->middlewares();
 
@@ -61,7 +61,6 @@ final class JWT
     private function bindUser()
     {
         container("user", JWT::getUser());
-
         blade()->composer('*', function (BladeOne $blade) {
             $blade->with("user", app("user"));
         });
@@ -89,11 +88,11 @@ final class JWT
         migrate("roles", dirname(__FILE__));
         migrate("users", dirname(__FILE__));
         migrate("user_permission", dirname(__FILE__));
-        migrate("user_comments", dirname(__FILE__));
     }
 
     public static function onUpdate()
     {
+        migrate("forgetPasswords", dirname(__FILE__));
     }
 
     public static function getSessionUser()

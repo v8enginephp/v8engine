@@ -20,25 +20,35 @@
                 <p class="text-center m-t-30 m-b-40">
                     <i class="icon-user-following border img-circle font-xxxlg p-20 text-dark"></i>
                 </p>
-                <h2 class="text-center m-b-20 text-dark ">ورود | ثبت نام</h2>
+                <h2 class="text-center m-b-20 text-dark ">ورود</h2>
                 <hr>
 
-                <form id="advanced-form" action="#">
+                <form id="advanced-form" method="post" action="{{route("login")}}">
+                    <input type="hidden" name="session" value="true">
                     <div class="form-group">
                         <label class="sr-only control-label" for="email"></label>
                         <div class="input-group round">
                                     <span class="input-group-addon">
                                         <i class="icon-envelope"></i>
                                     </span>
-                            <input type="text" class="form-control" dir="ltr" id="phone"
-                                   placeholder="09123456789">
+                            <input type="email" class="form-control" dir="ltr" id="email" name="email" placeholder="info@example.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="sr-only control-label" for="email"></label>
+                        <div class="input-group round">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-eye-slash"></i>
+                                    </span>
+                            <input type="password" class="form-control" dir="ltr" id="password" name="password" placeholder="رمزعبور">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-info btn-round btn-block" id="login" value="Login">
                             <i class="icon-check"></i>
-                            ورود|ثبت نام
+                            ورود
                         </button>
                     </div>
                 </form>
@@ -52,7 +62,8 @@
 
     $("#login").click(function (e) {
         e.preventDefault()
-        submiter(["#password", "#email"], "api/user/login", "POST", "", "", ["{{\Core\App::request()->input("redirect")}}", true], ["redirect", "session"])
+        {{--submiter(["#password", "#email"], "api/user/login", "POST", "", "", ["{{\Core\App::request()->input("redirect")}}", true], ["redirect", "session"])--}}
+        formSubmit("#advanced-form");
     })
 
 </script>

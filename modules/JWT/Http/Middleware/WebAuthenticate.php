@@ -20,6 +20,6 @@ class WebAuthenticate
     {
         if (JWT::updateSessionUser())
             return $next($request);
-        return redirect("user/auth?redirect={$request->url()}");
+        return redirect("user/login?redirect={$request->url()}");
     }
 }

@@ -18,6 +18,21 @@ class UserWebController
         return view("login");
     }
 
+    public function register()
+    {
+        return view("register");
+    }
+
+    public function forget()
+    {
+        return view("forget");
+    }
+
+    public function reset()
+    {
+        return view("reset");
+    }
+
     public function logout()
     {
         JWT::unsetSessionUser();

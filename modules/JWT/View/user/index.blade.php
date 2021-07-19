@@ -60,13 +60,7 @@
         <form class="form-inline">
             <label class="mx-auto" for="phone">شماره کاربر : </label>
             <input type="text" class="form-control" name="phone">
-            <label class="mx-auto" for="whitelabel">نماینده : </label>
-            <select name="parent_id" id="parent_id" class="custom-select">
-                <option value="">همه نماینده ها</option>
-                @foreach(\Module\JWT\Model\User::where(\Module\Crm\Model\User::ROLE_ID,6)->get() as $whitelabel)
-                    <option value="{{$whitelabel->id}}">{{$whitelabel->name}} - {{$whitelabel->phone}}</option>
-                @endforeach
-            </select>
+
             <input type="submit" class="btn btn-success rounded mx-auto" value="جستجو">
         </form>
         <hr>

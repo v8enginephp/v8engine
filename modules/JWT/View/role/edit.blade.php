@@ -32,13 +32,15 @@
                 <div class="form-group">
                     <label for="{{\Module\JWT\Model\Role::TITLE}}">موضوع</label>
                     <abbr title=""><i class="text-danger font-weight-bold>< icon-exclamation"></i></abbr>
-                    <input type="text" id="{{\Module\JWT\Model\Role::TITLE}}" class="form-control rounded">
+                    <input type="text" id="{{\Module\JWT\Model\Role::TITLE}}" value="{{$scope->title}}"
+                           class="form-control rounded">
                 </div>
 
                 <div class="form-group">
                     <label for="{{\Module\JWT\Model\Role::NAME}}">اسم</label>
                     <abbr title=""><i class="text-danger font-weight-bold>< icon-exclamation"></i></abbr>
-                    <input type="text" id="{{\Module\JWT\Model\Role::NAME}}" class="form-control rounded">
+                    <input type="text" id="{{\Module\JWT\Model\Role::NAME}}" value="{{$scope->name}}"
+                           class="form-control rounded">
                 </div>
 
                 <div class="form-group">
